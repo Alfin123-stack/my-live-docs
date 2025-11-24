@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createDocument } from '@/lib/actions/room.actions';
-import { Button } from './ui/button'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation';
+import { createDocument } from "@/lib/actions/room.actions";
+import { Button } from "./ui/button";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const AddDocumentBtn = ({ userId, email }: AddDocumentBtnProps) => {
   const router = useRouter();
@@ -11,21 +11,32 @@ const AddDocumentBtn = ({ userId, email }: AddDocumentBtnProps) => {
   const addDocumentHandler = async () => {
     try {
       const room = await createDocument({ userId, email });
-
-      if(room) router.push(`/documents/${room.id}`);
+      if (room) router.push(`/documents/${room.id}`);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   return (
-    <Button type="submit" onClick={addDocumentHandler} className="gradient-blue flex gap-1 shadow-md">
-      <Image 
-        src="/assets/icons/add.svg" alt="add" width={24} height={24}
-      />
-      <p className="hidden sm:block">Start a blank document</p>
-    </Button>
-  )
-}
+    <Button
+      onClick={addDocumentHandler}
+      className="
+        flex items-center gap-2 px-4 py-2 rounded-xl
+        backdrop-blur-md
+        bg-white/5
+        border border-white/10
+        text-white
+        transition-all duration-300
 
-export default AddDocumentBtn
+        hover:bg-[#1b2548]/70
+        hover:border-[#4b7cff]/60
+      ">
+      <Image src="/assets/icons/add.svg" alt="add" width={22} height={22} />
+      <span className="hidden sm:block text-sm tracking-wide">
+        New Document
+      </span>
+    </Button>
+  );
+};
+
+export default AddDocumentBtn;
