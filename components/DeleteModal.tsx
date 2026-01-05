@@ -56,7 +56,7 @@ export const DeleteModal = ({ roomId }: DeleteModalProps) => {
       <DialogContent
         className="
           bg-[#0F1A33] text-white border border-white/10
-          rounded-2xl shadow-[0_0_25px_rgba(75,124,255,0.25)]
+          rounded-2xl 
           max-w-sm p-6
         ">
         <DialogHeader className="space-y-4 text-center">
@@ -94,7 +94,6 @@ export const DeleteModal = ({ roomId }: DeleteModalProps) => {
               w-full rounded-xl
               bg-red-600 hover:bg-red-700 text-white
               flex items-center justify-center gap-2
-              hover:shadow-[0_0_15px_rgba(255,50,50,0.35)]
               transition
             ">
             <Trash2 className="w-4 h-4" />
