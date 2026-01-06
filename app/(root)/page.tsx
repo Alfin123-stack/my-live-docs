@@ -35,10 +35,14 @@ const Home = async () => {
     clerkUser.emailAddresses[0].emailAddress
   );
 
+  const userName = clerkUser.firstName || "User";
+
   return (
     <main className="min-h-screen w-full bg-[#0D1425] text-white px-6 py-6">
       <Header className="bg-[#0F1A33]/70 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/10 flex justify-between items-center">
-        <div className="text-lg font-semibold">My Documents</div>
+        <div className="text-sm font-normal">
+          <span className="text-xl font-bold">{userName}</span> Documents
+        </div>
 
         <div className="flex items-center gap-4">
           <Notifications />
@@ -48,7 +52,6 @@ const Home = async () => {
         </div>
       </Header>
 
-   
       {/* CLIENT COMPONENT */}
       <FilterBarClient total={docs.data.length} />
 

@@ -8,24 +8,52 @@ import { SearchInput } from "./SearchInput";
 
 import { useUser } from "@clerk/nextjs";
 import AddDocumentBtn from "@/components/AddDocumentBtn";
+import { useRouter, useSearchParams } from "next/navigation";
+
+type QueryValue = string | null | undefined;
 
 export default function FilterBarClient({ total }: { total: number }) {
-  const [sort, setSort] = useState("");
-  const [date, setDate] = useState("");
-  const [search, setSearch] = useState("");
+  const params = useSearchParams(); // hanya untuk INIT state
+  const router = useRouter();
+
+  // ✅ init state from URL
+  const [search, setSearch] = useState(() => params.get("search") ?? "");
+  const [sort, setSort] = useState(() => params.get("sort") ?? "");
+  const [date, setDate] = useState(() => params.get("date") ?? "");
 
   const { user, isLoaded } = useUser();
-
-  // Clerk belum siap → jangan render tombol dulu
   const userId = user?.id;
   const email = user?.primaryEmailAddress?.emailAddress;
 
+  // ✅ FIXED helper (ANTI & BUG)
+  const updateQuery = (updates: Record<string, QueryValue>) => {
+    // 🔥 SOURCE OF TRUTH
+    const currentParams = new URLSearchParams(window.location.search);
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (!value) {
+        currentParams.delete(key);
+      } else {
+        currentParams.set(key, value);
+      }
+    });
+
+    const query = currentParams.toString();
+
+    router.replace(query ? `?${query}` : "?", {
+      scroll: false,
+    });
+  };
+
   return (
     <>
+      {/* 🔍 Search */}
       <SearchInput
         value={search}
-        onChange={() => {
-          setSearch((e) => e);
+        onChange={(e) => {
+          const value = e.target.value;
+          setSearch(value);
+          updateQuery({ search: value });
         }}
       />
 
@@ -36,6 +64,7 @@ export default function FilterBarClient({ total }: { total: number }) {
             {total} Documents
           </Button>
 
+          {/* ↕ Sort */}
           <FilterSelect
             icon={<SortDesc className="w-4 h-4 text-[#6c7ac0]" />}
             placeholder="Sort by"
@@ -46,9 +75,13 @@ export default function FilterBarClient({ total }: { total: number }) {
               { label: "Title Z–A", value: "za" },
             ]}
             value={sort}
-            onChange={setSort}
+            onChange={(value) => {
+              setSort(value);
+              updateQuery({ sort: value });
+            }}
           />
 
+          {/* 📅 Date */}
           <FilterSelect
             icon={<Calendar className="w-4 h-4 text-[#6c7ac0]" />}
             placeholder="Date"
@@ -60,11 +93,14 @@ export default function FilterBarClient({ total }: { total: number }) {
               { label: "This year", value: "year" },
             ]}
             value={date}
-            onChange={setDate}
+            onChange={(value) => {
+              setDate(value);
+              updateQuery({ date: value });
+            }}
           />
         </div>
 
-        {/* 👉 Add Document Button di kanan */}
+        {/* ➕ Add Document */}
         {isLoaded && userId && email && (
           <AddDocumentBtn userId={userId} email={email} />
         )}
